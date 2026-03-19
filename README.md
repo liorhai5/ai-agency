@@ -62,6 +62,7 @@ Agents are curated from [msitarzewski/agency-agents](https://github.com/msitarze
 | Category | Agents |
 |----------|--------|
 | engineering | Software Architect, Backend Architect, Frontend Developer, Senior Developer, Code Reviewer, Security Engineer, DevOps Automator, SRE, Technical Writer, AI Engineer |
+| game-development | Game Designer, Level Designer, Narrative Designer |
 | product | Product Manager, Sprint Prioritizer, Feedback Synthesizer |
 | design | UX Architect, UX Researcher |
 | testing | Accessibility Auditor, API Tester, Reality Checker |
@@ -84,6 +85,7 @@ ai-agency/
   init.sh                # deploys agents, generates registry, installs skills
   agents/
     engineering/          # 10 engineering agents
+    game-development/     # 3 game development agents
     product/              # 3 product agents
     design/               # 2 design agents
     testing/              # 3 testing agents
