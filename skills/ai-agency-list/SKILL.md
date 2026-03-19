@@ -15,7 +15,7 @@ argument-hint: "[category name to filter, or leave empty for all]"
 
 1. Read the agent registry file at `~/.ai-agency/agents/registry.yaml`.
 2. If the file doesn't exist or is empty, tell the user: "No agents found. Run `./init.sh --ide <claude|cursor|codex|all>` from the ai-agency repo to deploy agents."
-3. If `$ARGUMENTS` specifies a category, filter to that category only. If the category doesn't exist, list available categories and ask the user to pick one.
+3. If `$ARGUMENTS` specifies a category, filter to that category only. If the category doesn't exist, treat the argument as a substring search — filter agents whose `stem` or `name` contains the argument (case-insensitive). If no agents match either, list available categories and ask the user to pick one.
 4. Display agents in a table grouped by category:
 
 ```

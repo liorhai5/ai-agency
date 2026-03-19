@@ -11,16 +11,19 @@ REGISTRY_FILE="$AGENTS_DST/registry.yaml"
 IDE=""
 DRY_RUN=false
 UPDATE_REGISTRY_ONLY=false
+UNINSTALL=false
 
 usage() {
   cat <<'EOF'
 Usage:
   ./init.sh --ide <claude|cursor|codex|all> [--dry-run]
   ./init.sh --update-registry [--dry-run]
+  ./init.sh --uninstall
 
 Options:
   --ide <name>          Target IDE: claude, cursor, codex, or all (required unless --update-registry)
   --update-registry     Regenerate registry.yaml without redeploying agents or skills
+  --uninstall           Remove all deployed agents, skills, and registry from all IDEs
   --dry-run             Preview without writing
   -h, --help            Show help
 EOF
@@ -38,6 +41,10 @@ while [ "$#" -gt 0 ]; do
       UPDATE_REGISTRY_ONLY=true
       shift
       ;;
+    --uninstall)
+      UNINSTALL=true
+      shift
+      ;;
     --dry-run)
       DRY_RUN=true
       shift
@@ -53,6 +60,47 @@ while [ "$#" -gt 0 ]; do
       ;;
   esac
 done
+
+# ── Uninstall ─────────────────────────────────────────────────────
+
+uninstall() {
+  local targets=()
+
+  [ -d "$DEPLOY_DIR" ] && targets+=("$DEPLOY_DIR")
+
+  for pattern in "$HOME/.claude/skills/ai-agency-"* "$HOME/.cursor/skills/ai-agency-"* "$HOME/.agents/skills/ai-agency-"*; do
+    [ -e "$pattern" ] && targets+=("$pattern")
+  done
+
+  if [ "${#targets[@]}" -eq 0 ]; then
+    echo "Nothing to remove — ai-agency is not installed."
+    exit 0
+  fi
+
+  echo "The following will be removed:"
+  for t in "${targets[@]}"; do
+    echo "  $t"
+  done
+
+  printf "Proceed? [y/N] "
+  read -r confirm
+  if [ "$confirm" != "y" ] && [ "$confirm" != "Y" ]; then
+    echo "Aborted."
+    exit 0
+  fi
+
+  for t in "${targets[@]}"; do
+    rm -rf "$t"
+    echo "Removed: $t"
+  done
+
+  echo "Uninstall complete."
+}
+
+if [ "$UNINSTALL" = true ]; then
+  uninstall
+  exit 0
+fi
 
 if [ "$UPDATE_REGISTRY_ONLY" = false ] && [ -z "$IDE" ]; then
   echo "--ide is required (unless using --update-registry)." >&2
@@ -86,7 +134,7 @@ HEADER
   local current_category=""
 
   # Find all .md agent files, sorted by path for stable output
-  find "$agents_dir" -mindepth 2 -name '*.md' -not -name 'registry.yaml' | sort | while read -r file; do
+  while read -r file; do
     local rel_path="${file#"$agents_dir"/}"
     local category
     category=$(dirname "$rel_path")
@@ -117,7 +165,7 @@ HEADER
     fi
     echo "      file: $rel_path" >> "$output"
     echo "      stem: $stem" >> "$output"
-  done
+  done < <(find "$agents_dir" -mindepth 2 -name '*.md' -not -name 'registry.yaml' | sort)
 
   echo "Generated registry: $output"
 }
@@ -172,47 +220,32 @@ deploy_skills() {
   local target_base
   target_base=$(skills_dir_for_ide "$ide")
 
-  # Determine which skill variant subdirectory to use
-  local variant_suffix=""
-  if [ "$ide" = "cursor" ] || [ "$ide" = "codex" ]; then
-    variant_suffix="-inline"
-  fi
-
   for skill_dir in "$SKILLS_SRC"/*/; do
     [ -d "$skill_dir" ] || continue
     local name
     name=$(basename "$skill_dir")
 
-    # Skip variant directories (they are deployed as part of the base skill)
-    case "$name" in
-      *-inline) continue ;;
-    esac
-
-    # Check if an IDE-specific variant exists
-    local src
-    if [ -n "$variant_suffix" ] && [ -d "$SKILLS_SRC/${name}${variant_suffix}" ]; then
-      src="$SKILLS_SRC/${name}${variant_suffix}/SKILL.md"
-    else
-      src="$skill_dir/SKILL.md"
-    fi
-
+    local src="$skill_dir/SKILL.md"
     [ -f "$src" ] || continue
 
     local dst="$target_base/$name/SKILL.md"
 
     if [ "$DRY_RUN" = true ]; then
       echo "[dry-run] would write skill: $dst"
+      SKILLS_COUNT=$((SKILLS_COUNT + 1))
       continue
     fi
 
     if [ -f "$dst" ] && diff -q "$src" "$dst" >/dev/null 2>&1; then
       echo "Skill unchanged: $name ($ide)"
+      SKILLS_COUNT=$((SKILLS_COUNT + 1))
       continue
     fi
 
     mkdir -p "$(dirname "$dst")"
     cp "$src" "$dst"
     echo "Wrote skill: $name → $dst"
+    SKILLS_COUNT=$((SKILLS_COUNT + 1))
   done
 }
 
@@ -224,10 +257,34 @@ if [ "$UPDATE_REGISTRY_ONLY" = true ]; then
   exit 0
 fi
 
+# ── Untracked agent detection ────────────────────────────────────
+
+detect_untracked_agents() {
+  local untracked=()
+  while read -r file; do
+    local rel_path="${file#"$AGENTS_DST"/}"
+    local src_file="$AGENTS_SRC/$rel_path"
+    if [ ! -f "$src_file" ]; then
+      untracked+=("$rel_path")
+    fi
+  done < <(find "$AGENTS_DST" -mindepth 2 -name '*.md' -not -name 'registry.yaml' | sort)
+
+  if [ "${#untracked[@]}" -gt 0 ]; then
+    echo ""
+    echo "Untracked agents (in $AGENTS_DST but not in source):"
+    for f in "${untracked[@]}"; do
+      echo "  - $f"
+    done
+    echo "These files are not managed by the repo. Use --update-registry to include them in the registry."
+  fi
+}
+
 # Full deploy
 deploy_agents
-generate_registry "$AGENTS_DST" "$REGISTRY_FILE"
+generate_registry "$AGENTS_SRC" "$REGISTRY_FILE"
+detect_untracked_agents
 
+SKILLS_COUNT=0
 if [ "$IDE" = "claude" ] || [ "$IDE" = "all" ]; then
   deploy_skills "claude"
 fi
@@ -238,4 +295,16 @@ if [ "$IDE" = "cursor" ] || [ "$IDE" = "all" ]; then
   deploy_skills "cursor"
 fi
 
-echo "Done."
+# Print deployment summary
+agent_count=0
+category_count=0
+while read -r file; do
+  agent_count=$((agent_count + 1))
+done < <(find "$AGENTS_SRC" -mindepth 2 -name '*.md' | sort)
+while read -r dir; do
+  category_count=$((category_count + 1))
+done < <(find "$AGENTS_SRC" -mindepth 1 -maxdepth 1 -type d | sort)
+
+echo ""
+echo "Deployed $agent_count agents across $category_count categories. $SKILLS_COUNT skills installed."
+echo "Registry: $REGISTRY_FILE"
