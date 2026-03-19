@@ -16,8 +16,8 @@ cd ~/Projects/ai-agency
 
 # Or deploy to a specific IDE
 ./init.sh --ide claude   # deploys skills to ~/.claude/skills/
-./init.sh --ide cursor   # deploys inline-mode skills to ~/.cursor/skills/
-./init.sh --ide codex    # deploys inline-mode skills to ~/.agents/skills/
+./init.sh --ide cursor   # deploys skills to ~/.cursor/skills/
+./init.sh --ide codex    # deploys skills to ~/.agents/skills/
 ```
 
 After init, use `/ai-agency-list` to browse agents or `/ai-agency-consult @agent-name` to get expert perspectives.
@@ -53,7 +53,7 @@ Agent names use the full filename stem:
 /ai-agency-deliberate @engineering-software-architect @engineering-backend-architect how should we structure the new API?
 ```
 
-Run `/ai-agency-list` to see all available `@` names.
+If you mistype a name, the skill suggests close matches ("Did you mean?"). Run `/ai-agency-list` to see all available `@` names — you can also pass a substring to filter (e.g., `/ai-agency-list architect`).
 
 ## Agent Library
 
@@ -70,24 +70,12 @@ Agents are curated from [msitarzewski/agency-agents](https://github.com/msitarze
 
 ### Adding Agents
 
-1. Copy or create a `.md` file in `agents/<category>/`:
+See [`docs/authoring-guide.md`](docs/authoring-guide.md) for the full agent file structure, frontmatter requirements, and quality checklist.
 
-```yaml
----
-name: My Custom Expert
-description: One-line description of expertise
----
+Quick version:
 
-# Expert persona content...
-```
-
-2. Regenerate the registry:
-
-```bash
-./init.sh --update-registry
-```
-
-Or do a full redeploy: `./init.sh --ide claude`
+1. Create a `.md` file in `agents/<category>/` with `name` and `description` frontmatter.
+2. Redeploy: `./init.sh --ide claude` (or `--update-registry` to just regenerate the registry).
 
 ## Repository Layout
 
@@ -101,12 +89,12 @@ ai-agency/
     testing/              # 3 testing agents
     project-management/   # 1 PM agent
     specialized/          # 2 specialized agents
+  docs/
+    authoring-guide.md    # how to create and maintain agent files
   skills/
-    ai-agency-list/       # /ai-agency-list (all IDEs)
-    ai-agency-consult/    # /ai-agency-consult (Claude Code — subagent mode)
-    ai-agency-deliberate/ # /ai-agency-deliberate (Claude Code — subagent mode)
-    ai-agency-consult-inline/    # /ai-agency-consult (Cursor/Codex — inline mode)
-    ai-agency-deliberate-inline/ # /ai-agency-deliberate (Cursor/Codex — inline mode)
+    ai-agency-list/       # /ai-agency-list
+    ai-agency-consult/    # /ai-agency-consult
+    ai-agency-deliberate/ # /ai-agency-deliberate
 ```
 
 ## Machine Layout After Init
@@ -121,8 +109,8 @@ ai-agency/
     ...
 
 ~/.claude/skills/ai-agency-{list,consult,deliberate}/SKILL.md   # Claude Code skills
-~/.cursor/skills/ai-agency-{list,consult,deliberate}/SKILL.md   # Cursor skills (inline mode)
-~/.agents/skills/ai-agency-{list,consult,deliberate}/SKILL.md   # Codex skills (inline mode)
+~/.cursor/skills/ai-agency-{list,consult,deliberate}/SKILL.md   # Cursor skills
+~/.agents/skills/ai-agency-{list,consult,deliberate}/SKILL.md   # Codex skills
 ```
 
 ## Init Options
@@ -131,18 +119,10 @@ ai-agency/
 ./init.sh --ide <claude|cursor|codex|all>  # required: target IDE
 ./init.sh --ide claude --dry-run           # preview without writing
 ./init.sh --update-registry                # regenerate registry only (no redeploy)
-./init.sh --update-registry --dry-run      # preview registry regeneration
+./init.sh --uninstall                      # remove all deployed agents and skills
 ```
 
-## Cross-Provider Behavior
-
-| Scenario | Claude Code | Cursor / Codex |
-|----------|-------------|----------------|
-| Single agent consult | Inline persona injection | Inline persona injection |
-| Multi-agent consult | Parallel subagents | Sequential inline |
-| Deliberation | Parallel subagents per phase | Sequential inline per phase |
-
-Agent files are identical across all providers. Only the skill orchestration differs.
+The same skills are deployed to all IDEs. After a full deploy, a summary is printed with agent/category/skill counts. If there are files in the deploy target that aren't in the repo source, they're listed as "untracked agents."
 
 ## Independence
 
