@@ -2,7 +2,7 @@
 
 An on-demand expert consultation system for AI coding assistants.
 
-You curate expert personas here. Running `init.sh` deploys them to `~/.ai-agency/` and installs skills into your IDE. Agents activate only when you explicitly invoke them — never auto-delegated.
+You curate expert personas here. Running `ais install` deploys them to `~/.ai-stack/` and installs skills into your IDE. Agents activate only when you explicitly invoke them — never auto-delegated.
 
 ## Quick Start
 
@@ -11,21 +11,16 @@ You curate expert personas here. Running `init.sh` deploys them to `~/.ai-agency
 git clone <repo-url> ~/Projects/ai-agency
 cd ~/Projects/ai-agency
 
-# Deploy to all supported IDEs at once
-./init.sh --ide all
-
-# Or deploy to a specific IDE
-./init.sh --ide claude   # deploys skills to ~/.claude/skills/
-./init.sh --ide cursor   # deploys skills to ~/.cursor/skills/
-./init.sh --ide codex    # deploys skills to ~/.agents/skills/
+# Deploy to all supported IDEs via ai-stack
+ais install
 ```
 
-After init, use `/ai-agency-list` to browse agents or `/ai-agency-consult @agent-name` to get expert perspectives.
+After install, use `/agency:list` to browse agents or `/agency:consult @agent-name` to get expert perspectives.
 
 ## How It Works
 
 1. **Agent files** live in `agents/` — YAML frontmatter + markdown body defining an expert persona.
-2. **`init.sh`** copies agents to `~/.ai-agency/agents/`, generates a registry, and deploys skills.
+2. **`ais install`** deploys agents to `~/.ai-stack/agents/agency/`, generates a registry, and installs skills.
 3. **Skills** read the registry and agent files on demand when you invoke them.
 4. Agents are **never** deployed to `~/.claude/agents/` — this prevents auto-delegation.
 
@@ -33,9 +28,9 @@ After init, use `/ai-agency-list` to browse agents or `/ai-agency-consult @agent
 
 | Skill | Command | Purpose |
 |-------|---------|---------|
-| `ai-agency-list` | `/ai-agency-list [category]` | Browse available agents by category |
-| `ai-agency-consult` | `/ai-agency-consult @agent [...] task` | Get expert perspectives (single=inline, multi=parallel subagents) |
-| `ai-agency-deliberate` | `/ai-agency-deliberate @a1 @a2 [...] task` | Structured 4-phase deliberation toward consensus |
+| `agency:list` | `/agency:list [category]` | Browse available agents by category |
+| `agency:consult` | `/agency:consult @agent [...] task` | Get expert perspectives (single=inline, multi=parallel subagents) |
+| `agency:deliberate` | `/agency:deliberate @a1 @a2 [...] task` | Structured 4-phase deliberation toward consensus |
 
 ### Consult vs. Deliberate
 
@@ -49,11 +44,11 @@ Deliberation phases: Independent Positions → Cross-Review → Convergence (max
 Agent names use the full filename stem:
 
 ```
-/ai-agency-consult @engineering-security-engineer @design-ux-architect review the auth flow
-/ai-agency-deliberate @engineering-software-architect @engineering-backend-architect how should we structure the new API?
+/agency:consult @engineering-security-engineer @design-ux-architect review the auth flow
+/agency:deliberate @engineering-software-architect @engineering-backend-architect how should we structure the new API?
 ```
 
-If you mistype a name, the skill suggests close matches ("Did you mean?"). Run `/ai-agency-list` to see all available `@` names — you can also pass a substring to filter (e.g., `/ai-agency-list architect`).
+If you mistype a name, the skill suggests close matches ("Did you mean?"). Run `/agency:list` to see all available `@` names — you can also pass a substring to filter (e.g., `/agency:list architect`).
 
 ## Agent Library
 
@@ -75,57 +70,46 @@ See [`docs/authoring-guide.md`](docs/authoring-guide.md) for the full agent file
 
 Quick version:
 
-1. Create a `.md` file in `agents/<category>/` with `name` and `description` frontmatter.
-2. Redeploy: `./init.sh --ide claude` (or `--update-registry` to just regenerate the registry).
+1. Create a `.md` file in `agents/` named `{category}-{role}.md` with `name` and `description` frontmatter.
+2. Redeploy: `ais install`
 
 ## Repository Layout
 
 ```
 ai-agency/
-  init.sh                # deploys agents, generates registry, installs skills
-  agents/
-    engineering/          # 10 engineering agents
-    game-development/     # 3 game development agents
-    product/              # 3 product agents
-    design/               # 2 design agents
-    testing/              # 3 testing agents
-    project-management/   # 1 PM agent
-    specialized/          # 2 specialized agents
+  ai-stack.plugin.json   # ai-stack plugin manifest
+  agents/                  # 24 agent persona files (flat, named {category}-{role}.md)
+  scripts/
+    post-install.sh       # generates registry after ais install
+    pre-uninstall.sh      # removes registry before ais remove
   docs/
     authoring-guide.md    # how to create and maintain agent files
   skills/
-    ai-agency-list/       # /ai-agency-list
-    ai-agency-consult/    # /ai-agency-consult
-    ai-agency-deliberate/ # /ai-agency-deliberate
+    list/                 # /agency:list
+    consult/              # /agency:consult
+    deliberate/           # /agency:deliberate
 ```
 
-## Machine Layout After Init
+## Machine Layout After Install
 
 ```
-~/.ai-agency/
+~/.ai-stack/
+  agency/
+    registry.yaml              # auto-generated agent index (name, description, file, stem)
   agents/
-    registry.yaml          # auto-generated agent index (name, description, file, stem)
-    engineering/            # deployed agent files
-    product/
-    design/
-    ...
+    agency/                    # deployed agent files (flat, one file per agent)
 
-~/.claude/skills/ai-agency-{list,consult,deliberate}/SKILL.md   # Claude Code skills
-~/.cursor/skills/ai-agency-{list,consult,deliberate}/SKILL.md   # Cursor skills
-~/.agents/skills/ai-agency-{list,consult,deliberate}/SKILL.md   # Codex skills
+~/.claude/skills/agency_{list,consult,deliberate}/SKILL.md   # Claude Code skills
+~/.cursor/skills/agency_{list,consult,deliberate}/SKILL.md   # Cursor skills
+~/.agents/skills/agency_{list,consult,deliberate}/SKILL.md   # Codex skills
 ```
 
-## Init Options
+## Managed by ai-stack
+
+ai-agency is deployed via [ai-stack](../ai-stack). To install or remove:
 
 ```bash
-./init.sh --ide <claude|cursor|codex|all>  # required: target IDE
-./init.sh --ide claude --dry-run           # preview without writing
-./init.sh --update-registry                # regenerate registry only (no redeploy)
-./init.sh --uninstall                      # remove all deployed agents and skills
+ais install           # deploy all plugins including agency
+ais remove agency     # remove agency only
+ais list              # show installed plugins and resources
 ```
-
-The same skills are deployed to all IDEs. After a full deploy, a summary is printed with agent/category/skill counts. If there are files in the deploy target that aren't in the repo source, they're listed as "untracked agents."
-
-## Independence
-
-ai-agency is a standalone tool with no external dependencies. It works alongside any workflow, pipeline, or methodology — you compose it freely with whatever tools you already use.
