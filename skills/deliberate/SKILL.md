@@ -1,5 +1,5 @@
 ---
-name: ai-agency-deliberate
+name: agency:deliberate
 description: Structured multi-agent deliberation — experts debate, challenge, and converge on a shared recommendation through a 4-phase protocol.
 argument-hint: "@agent1 @agent2 [@agent3 ...] [task description]"
 ---
@@ -11,15 +11,15 @@ argument-hint: "@agent1 @agent2 [@agent3 ...] [task description]"
 Parse `$ARGUMENTS` as follows:
 - Tokens starting with `@` → agent names (strip the `@` prefix). These are filename stems matching the `stem` field in the registry.
 - Everything else → task description.
-- If fewer than 2 `@` tokens → error: "Deliberation requires at least 2 agents. Use `/ai-agency-consult` for single-agent perspectives."
+- If fewer than 2 `@` tokens → error: "Deliberation requires at least 2 agents. Use `/agency:consult` for single-agent perspectives."
 - If no task text → infer the task from the current conversation context.
 
 ## Agent Resolution
 
-1. Read `~/.ai-agency/agents/registry.yaml`.
+1. Read `~/.ai-stack/agency/registry.yaml`.
 2. For each `@name`, find the entry where `stem` matches the name.
-3. If no match → search all `stem` values for substring matches of the given name. If matches are found, suggest them: "Agent '@name' not found. Did you mean: @match1, @match2?" If no substring matches either, error: "Agent '@name' not found. Run `/ai-agency-list` to see available agents."
-4. Read each matched agent's markdown file from `~/.ai-agency/agents/[file]`.
+3. If no match → search all `stem` values for substring matches of the given name. If matches are found, suggest them: "Agent '@name' not found. Did you mean: @match1, @match2?" If no substring matches either, error: "Agent '@name' not found. Run `/agency:list` to see available agents."
+4. Read each matched agent's markdown file from `~/.ai-stack/agents/agency/[file]`.
 
 ## Deliberation Protocol
 
