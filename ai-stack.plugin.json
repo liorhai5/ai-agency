@@ -1,0 +1,10 @@
+{
+  "name": "agency",
+  "description": "Expert consultation system — 24 specialized AI personas",
+  "skills": "skills/",
+  "agents": "agents/",
+  "lifecycle": {
+    "postInstall": "scripts/post-install.sh",
+    "preUninstall": "scripts/pre-uninstall.sh"
+  }
+}
