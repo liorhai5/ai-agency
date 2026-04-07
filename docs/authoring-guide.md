@@ -4,9 +4,9 @@ How to create and maintain agent persona files for the ai-agency system.
 
 ## File Location
 
-Agents live in `agents/` (flat directory). The category is encoded in the filename prefix.
+Agents live in `agents/` (flat directory).
 
-File naming convention: `<category>-<role>.md` (e.g., `engineering-software-architect.md`).
+File naming convention: `<role>.md` (e.g., `software-architect.md`). No category prefix — the role name alone must be descriptive enough to be self-evident.
 
 ## Frontmatter (Required)
 
@@ -114,4 +114,4 @@ Before adding an agent:
 - [ ] Rules are specific and actionable (not generic advice)
 - [ ] If stack-specific, prerequisites pattern is followed (declare + graceful exit)
 - [ ] File is placed in `agents/` (flat)
-- [ ] File name follows `<category>-<role>.md` convention
+- [ ] File named `<role>.md` — no category prefix, role name is self-descriptive
