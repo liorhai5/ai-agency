@@ -1,6 +1,6 @@
 # Agent Authoring Guide
 
-How to create and maintain agent persona files for the ai-agency system.
+How to create and maintain agent persona files for the agency skill.
 
 ## File Location
 
@@ -16,15 +16,13 @@ Every agent file starts with YAML frontmatter:
 ---
 name: Human-readable Name
 description: One-line summary of the agent's expertise and focus area.
-color: indigo          # optional — for UI display
-emoji: 🏛️             # optional — for UI display
-vibe: Short personality tagline  # optional — sets the tone
+vibe: Short personality tagline  # optional — sets the tone when adopting the persona
 ---
 ```
 
 **Required fields:**
-- `name` — displayed in the registry and skill output
-- `description` — used for agent discovery and matching
+- `name` — displayed in the catalog and skill output
+- `description` — used for agent discovery and matching via `/agency find`
 
 ## Sections
 
@@ -115,3 +113,4 @@ Before adding an agent:
 - [ ] If stack-specific, prerequisites pattern is followed (declare + graceful exit)
 - [ ] File is placed in `agents/` (flat)
 - [ ] File named `<role>.md` — no category prefix, role name is self-descriptive
+- [ ] `docs/catalog.md` updated with the new agent entry
