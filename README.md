@@ -1,115 +1,95 @@
 # ai-agency
 
-An on-demand expert consultation system for AI coding assistants.
+On-demand expert consultation for AI coding assistants. 19 specialized personas you invoke explicitly — never auto-delegated.
 
-You curate expert personas here. Running `ais install` deploys them to `~/.ai-stack/` and installs skills into your IDE. Agents activate only when you explicitly invoke them — never auto-delegated.
-
-## Quick Start
+## Install
 
 ```bash
-# Clone the repo
-git clone <repo-url> ~/Projects/ai-agency
-cd ~/Projects/ai-agency
+# Claude Code
+git clone <repo-url> ~/.claude/skills/agency
 
-# Deploy to all supported IDEs via ai-stack
-ais install
+# Codex / cross-client
+git clone <repo-url> ~/.agents/skills/agency
 ```
 
-After install, use `/agency:list` to browse agents or `/agency:consult @agent-name` to get expert perspectives.
+After install, use `/agency list` to browse agents or `/agency consult @agent-name task` to get expert perspectives.
 
-## How It Works
+## Usage
 
-1. **Agent files** live in `agents/` — YAML frontmatter + markdown body defining an expert persona.
-2. **`ais install`** deploys agents to `~/.ai-stack/agents/agency/`, generates a registry, and installs skills.
-3. **Skills** read the registry and agent files on demand when you invoke them.
-4. Agents are **never** deployed to `~/.claude/agents/` — this prevents auto-delegation.
-
-## Skills (Slash Commands)
-
-| Skill | Command | Purpose |
-|-------|---------|---------|
-| `agency:list` | `/agency:list [category]` | Browse available agents by category |
-| `agency:consult` | `/agency:consult @agent [...] task` | Get expert perspectives (single=inline, multi=parallel subagents) |
-| `agency:deliberate` | `/agency:deliberate @a1 @a2 [...] task` | Structured 4-phase deliberation toward consensus |
+```
+/agency list                                         Browse all agents
+/agency find review the auth flow                    Get agent recommendations for a task
+/agency consult @planner review this task             Single expert perspective
+/agency consult @planner @readiness-advisor task      Parallel perspectives + synthesis
+/agency deliberate @software-architect @backend-architect how to structure the API
+                                                      Structured 4-phase debate
+```
 
 ### Consult vs. Deliberate
 
-- **Consult** = parallel, independent opinions → you decide
+- **Consult** = independent opinions (single agent inline, multiple agents parallel) → you decide
 - **Deliberate** = iterative 4-phase protocol → experts converge on a recommendation
 
 Deliberation phases: Independent Positions → Cross-Review → Convergence (max 2 rounds) → Synthesis
 
 ### `@` Syntax
 
-Agent names use the full filename stem:
+Agent names use the filename stem:
 
 ```
-/agency:consult @engineering-security-engineer @design-ux-architect review the auth flow
-/agency:deliberate @engineering-software-architect @engineering-backend-architect how should we structure the new API?
+/agency consult @security-engineer @readiness-advisor review the auth flow
+/agency deliberate @software-architect @backend-architect how should we structure the new API?
 ```
 
-If you mistype a name, the skill suggests close matches ("Did you mean?"). Run `/agency:list` to see all available `@` names — you can also pass a substring to filter (e.g., `/agency:list architect`).
+Run `/agency list` to see all available `@` names. You can pass a filter to narrow results (e.g., `/agency list architect`).
 
 ## Agent Library
 
-Agents are curated from [msitarzewski/agency-agents](https://github.com/msitarzewski/agency-agents) and custom additions. Current inventory:
+19 curated expert personas. See [docs/catalog.md](docs/catalog.md) for the full catalog with descriptions and "when to use it" guidance.
 
-| Category | Agents |
-|----------|--------|
-| engineering | Software Architect, Backend Architect, Frontend Developer, Senior Developer, Code Reviewer, Security Engineer, DevOps Automator, SRE, Technical Writer, AI Engineer |
+| Group | Agents |
+|-------|--------|
+| engineering | Software Architect, Backend Architect, Frontend Developer, Code Reviewer, Security Engineer, Reliability Engineer, DevOps Automator, Technical Writer, AI Engineer |
 | game-development | Game Designer, Level Designer, Narrative Designer |
-| product | Product Manager, Sprint Prioritizer, Feedback Synthesizer |
-| design | UX Architect, UX Researcher |
-| testing | Accessibility Auditor, API Tester, Reality Checker |
-| project-management | Senior Project Manager |
-| specialized | Developer Advocate, Workflow Architect |
+| product | Product Manager, Product Analyst |
+| ux | UX Strategist |
+| testing | Accessibility Expert, API Tester |
+| cross-cutting | Planner, Readiness Advisor |
 
 ### Adding Agents
 
-See [`docs/authoring-guide.md`](docs/authoring-guide.md) for the full agent file structure, frontmatter requirements, and quality checklist.
+See [docs/authoring-guide.md](docs/authoring-guide.md) for the agent file structure and quality checklist.
 
 Quick version:
 
-1. Create a `.md` file in `agents/` named `{category}-{role}.md` with `name` and `description` frontmatter.
-2. Redeploy: `ais install`
+1. Create a `.md` file in `agents/` named `{role}.md` with `name` and `description` frontmatter.
+2. Update `docs/catalog.md` with the new agent.
+3. If installed via git clone, changes are available immediately (or after `git pull`).
 
 ## Repository Layout
 
 ```
 ai-agency/
-  ai-stack.plugin.json   # ai-stack plugin manifest
-  agents/                  # 24 agent persona files (flat, named {category}-{role}.md)
-  scripts/
-    post-install.sh       # generates registry after ais install
-    pre-uninstall.sh      # removes registry before ais remove
+  SKILL.md                 # AgentSkills entry point — argument dispatch
+  commands/
+    list.md                # /agency list — browse catalog
+    find.md                # /agency find — task-based agent discovery
+    consult.md             # /agency consult — expert perspectives
+    deliberate.md          # /agency deliberate — structured debate
+  agents/                  # 19 agent persona files (flat, named {role}.md)
   docs/
-    authoring-guide.md    # how to create and maintain agent files
-  skills/
-    list/                 # /agency:list
-    consult/              # /agency:consult
-    deliberate/           # /agency:deliberate
+    catalog.md             # Agent catalog — browse and pick
+    authoring-guide.md     # How to create and maintain agent files
 ```
 
-## Machine Layout After Install
-
-```
-~/.ai-stack/
-  agency/
-    registry.yaml              # auto-generated agent index (name, description, file, stem)
-  agents/
-    agency/                    # deployed agent files (flat, one file per agent)
-
-~/.claude/skills/agency_{list,consult,deliberate}/SKILL.md   # Claude Code skills
-~/.cursor/skills/agency_{list,consult,deliberate}/SKILL.md   # Cursor skills
-~/.agents/skills/agency_{list,consult,deliberate}/SKILL.md   # Codex skills
-```
-
-## Managed by ai-stack
-
-ai-agency is deployed via [ai-stack](../ai-stack). To install or remove:
+## Update
 
 ```bash
-ais install           # deploy all plugins including agency
-ais remove agency     # remove agency only
-ais list              # show installed plugins and resources
+cd ~/.claude/skills/agency && git pull
+```
+
+## Uninstall
+
+```bash
+rm -rf ~/.claude/skills/agency
 ```

@@ -173,3 +173,42 @@ Core user stories with acceptance criteria.
 - **Discovery rigor**: Every initiative >2 weeks backed by at least 5 user interviews
 - **Scope discipline**: Zero untracked scope additions mid-sprint
 - **Team clarity**: Any engineer can articulate the "why" behind their current story without consulting the PM
+
+## 🧮 Prioritization Frameworks
+
+Reference tools for scoring and ranking initiatives. Use the right framework for the decision — RICE for cross-team alignment, MoSCoW for scope negotiation, Value vs. Effort for quick sorting, Kano for understanding user delight vs. expectation.
+
+### RICE
+
+**Score = (Reach × Impact × Confidence) ÷ Effort**
+
+- **Reach**: How many users are affected per time period?
+- **Impact**: How much does this move the needle? (0.25 = minimal, 0.5 = low, 1 = medium, 2 = high, 3 = massive)
+- **Confidence**: How certain are you in the estimates? (expressed as a percentage)
+- **Effort**: Total person-months of work required
+
+Best for comparing initiatives across teams where a shared score creates alignment.
+
+### MoSCoW
+
+- **Must-have**: Without this, the release fails — non-negotiable
+- **Should-have**: High value, but launch is viable without it — defer if needed
+- **Could-have**: Nice to include, but only if capacity allows
+- **Won't-have (this time)**: Explicitly out of scope; prevents scope creep by naming it
+
+Best for scope negotiation with stakeholders when there's more to do than capacity allows.
+
+### Value vs. Effort Matrix
+
+- **High value, low effort**: Do first — quick wins that compound
+- **High value, high effort**: Plan carefully — strategic bets that need resourcing commitment
+- **Low value, low effort**: Fill-ins — useful only when capacity genuinely permits
+- **Low value, high effort**: Don't do — challenge whether the value framing is correct before deprioritizing
+
+### Kano Model
+
+- **Must-be** (basic expectations): Users don't thank you for these; they punish you for missing them
+- **Performance** (linear satisfaction): More of this = more satisfaction; less = less
+- **Delighters** (excitement): Users don't know they want this until they have it
+- **Indifferent**: Users don't care either way — avoid building
+- **Reverse**: Some users actively dislike this — check segmentation before building
