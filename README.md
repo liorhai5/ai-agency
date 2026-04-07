@@ -5,11 +5,15 @@ On-demand expert consultation for AI coding assistants. 19 specialized personas 
 ## Install
 
 ```bash
-# Claude Code
-git clone <repo-url> ~/.claude/skills/agency
+# Both Claude Code and Codex (recommended)
+git clone https://github.com/liorhai5/ai-agency.git ~/.agents/skills/agency
+ln -s ~/.agents/skills/agency ~/.claude/skills/agency
 
-# Codex / cross-client
-git clone <repo-url> ~/.agents/skills/agency
+# Claude Code only
+git clone https://github.com/liorhai5/ai-agency.git ~/.claude/skills/agency
+
+# Codex only
+git clone https://github.com/liorhai5/ai-agency.git ~/.agents/skills/agency
 ```
 
 After install, use `/agency list` to browse agents or `/agency consult @agent-name task` to get expert perspectives.
