@@ -41,28 +41,27 @@ Deliberation phases: Independent Positions → Cross-Review → Convergence (max
 
 ### `@` Syntax
 
-Agent names use the full filename stem:
+Agent names use the filename stem (no category prefix):
 
 ```
-/agency:consult @engineering-security-engineer @design-ux-architect review the auth flow
-/agency:deliberate @engineering-software-architect @engineering-backend-architect how should we structure the new API?
+/agency:consult @security-engineer @readiness-advisor review the auth flow
+/agency:deliberate @software-architect @backend-architect how should we structure the new API?
 ```
 
 If you mistype a name, the skill suggests close matches ("Did you mean?"). Run `/agency:list` to see all available `@` names — you can also pass a substring to filter (e.g., `/agency:list architect`).
 
 ## Agent Library
 
-Agents are curated from [msitarzewski/agency-agents](https://github.com/msitarzewski/agency-agents) and custom additions. Current inventory:
+19 curated expert personas. Current inventory:
 
-| Category | Agents |
-|----------|--------|
-| engineering | Software Architect, Backend Architect, Frontend Developer, Senior Developer, Code Reviewer, Security Engineer, DevOps Automator, SRE, Technical Writer, AI Engineer |
+| Group | Agents |
+|-------|--------|
+| engineering | Software Architect, Backend Architect, Frontend Developer, Code Reviewer, Security Engineer, Reliability Engineer, DevOps Automator, Technical Writer, AI Engineer |
 | game-development | Game Designer, Level Designer, Narrative Designer |
-| product | Product Manager, Sprint Prioritizer, Feedback Synthesizer |
-| design | UX Architect, UX Researcher |
-| testing | Accessibility Auditor, API Tester, Reality Checker |
-| project-management | Senior Project Manager |
-| specialized | Developer Advocate, Workflow Architect |
+| product | Product Manager, Product Analyst |
+| ux | UX Strategist |
+| testing | Accessibility Expert, API Tester |
+| cross-cutting | Planner, Readiness Advisor |
 
 ### Adding Agents
 
@@ -70,7 +69,7 @@ See [`docs/authoring-guide.md`](docs/authoring-guide.md) for the full agent file
 
 Quick version:
 
-1. Create a `.md` file in `agents/` named `{category}-{role}.md` with `name` and `description` frontmatter.
+1. Create a `.md` file in `agents/` named `{role}.md` (no category prefix) with `name` and `description` frontmatter.
 2. Redeploy: `ais install`
 
 ## Repository Layout
@@ -78,7 +77,7 @@ Quick version:
 ```
 ai-agency/
   ai-stack.plugin.json   # ai-stack plugin manifest
-  agents/                  # 24 agent persona files (flat, named {category}-{role}.md)
+  agents/                  # 19 agent persona files (flat, named {role}.md)
   scripts/
     post-install.sh       # generates registry after ais install
     pre-uninstall.sh      # removes registry before ais remove

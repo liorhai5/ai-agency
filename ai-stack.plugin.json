@@ -1,6 +1,6 @@
 {
   "name": "agency",
-  "description": "Expert consultation system — 24 specialized AI personas",
+  "description": "Expert consultation system — 19 specialized AI personas",
   "skills": "skills/",
   "agents": "agents/",
   "lifecycle": {
