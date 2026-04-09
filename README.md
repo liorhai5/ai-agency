@@ -5,15 +5,28 @@ On-demand expert consultation for AI coding assistants. 19 specialized personas 
 ## Install
 
 ```bash
-# Both Claude Code and Codex (recommended)
-git clone https://github.com/liorhai5/ai-agency.git ~/.agents/skills/agency
-ln -s ~/.agents/skills/agency ~/.claude/skills/agency
+# Recommended — installs + symlinks to your agents automatically
+npx skills add liorhai5/ai-agency
+```
 
+**Manual — canonical location + symlinks**
+
+```bash
+git clone https://github.com/liorhai5/ai-agency.git ~/.agents/skills/agency
+
+# Symlink to agents you use
+ln -s ~/.agents/skills/agency ~/.claude/skills/agency    # Claude Code
+ln -s ~/.agents/skills/agency ~/.codex/skills/agency     # Codex
+```
+
+**Manual — direct to a single agent**
+
+```bash
 # Claude Code only
 git clone https://github.com/liorhai5/ai-agency.git ~/.claude/skills/agency
 
 # Codex only
-git clone https://github.com/liorhai5/ai-agency.git ~/.agents/skills/agency
+git clone https://github.com/liorhai5/ai-agency.git ~/.codex/skills/agency
 ```
 
 After install, use `/agency list` to browse agents or `/agency consult @agent-name task` to get expert perspectives.
@@ -89,11 +102,21 @@ ai-agency/
 ## Update
 
 ```bash
-cd ~/.claude/skills/agency && git pull
+# npx skills
+npx skills check          # check for updates
+npx skills update         # apply updates
+
+# manual
+cd ~/.agents/skills/agency && git pull
 ```
 
 ## Uninstall
 
 ```bash
-rm -rf ~/.claude/skills/agency
+# npx skills
+npx skills remove agency
+
+# manual — remove clone and any symlinks
+rm -rf ~/.agents/skills/agency
+rm -f ~/.claude/skills/agency ~/.codex/skills/agency
 ```
