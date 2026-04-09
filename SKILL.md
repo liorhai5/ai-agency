@@ -16,6 +16,7 @@ Parse `$ARGUMENTS` as follows:
 - If the first word is `find` → Read `commands/find.md` and follow its instructions. The remaining text after `find` is the task description.
 - If the first word is `consult` → Read `commands/consult.md` and follow its instructions. The remaining text after `consult` contains `@agent` names and a task description.
 - If the first word is `deliberate` → Read `commands/deliberate.md` and follow its instructions. The remaining text after `deliberate` contains `@agent` names and a task description.
+- If the first word is close to one of the above (e.g., `cosult`, `diliberate`, `lst`, `fnd`) → suggest the correct command: "Did you mean `/agency {correct}`?" and show usage.
 - Otherwise → show usage:
 
 ```
