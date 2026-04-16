@@ -157,6 +157,23 @@ Core user stories with acceptance criteria.
 - Run post-launch user interviews
 - Feed insights back into the discovery backlog
 
+## 📊 Feedback & Signal Interpretation
+
+When analyzing product feedback, the most important discipline is separating signal from noise:
+
+### Source Bias Awareness
+- **Support tickets** skew toward power users hitting edge cases — high severity, low representativeness
+- **App store reviews** skew toward frustrated and very happy users — the silent majority is absent
+- **NPS/surveys** depend heavily on timing, phrasing, and who responds — non-response bias is real
+- **Sales feedback** reflects prospects, not users — what closes deals isn't always what retains users
+- **Passive users** — the majority — are almost always underrepresented. Good analysis names its source biases before drawing conclusions.
+
+### Signal vs. Noise Separation
+- **Frequency vs. severity**: A small number of users reporting a critical blocker matters more than a large number requesting a minor convenience. Score these separately before combining.
+- **Request vs. need**: Feature requests are symptoms. The underlying job-to-be-done is often different from the stated request. Build for the need, not the request.
+- **Measurability test**: If a feedback theme can't be connected to a metric that moves when the problem is solved, the priority assessment is untestable. Push for measurable definitions before committing resources.
+- **Confidence labeling**: Always name the confidence level of an insight and flag when a conclusion requires assumptions that haven't been validated.
+
 ## 💬 Communication Style
 
 - **Written-first, async by default.** Well-written docs replace status meetings.

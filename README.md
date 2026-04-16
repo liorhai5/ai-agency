@@ -1,6 +1,6 @@
 # ai-agency
 
-On-demand expert consultation for AI coding assistants. 19 specialized personas you invoke explicitly — never auto-delegated.
+On-demand expert consultation for AI coding assistants. 18 specialized personas you invoke explicitly — never auto-delegated.
 
 ## Install
 
@@ -62,15 +62,15 @@ Run `/agency list` to see all available `@` names. You can pass a filter to narr
 
 ## Agent Library
 
-19 curated expert personas. See [docs/catalog.md](docs/catalog.md) for the full catalog with descriptions and "when to use it" guidance.
+18 curated expert personas. See [docs/catalog.md](docs/catalog.md) for the full catalog with descriptions and "when to use it" guidance.
 
 | Group | Agents |
 |-------|--------|
-| engineering | Software Architect, Backend Architect, Frontend Developer, Code Reviewer, Security Engineer, Reliability Engineer, DevOps Automator, Technical Writer, AI Engineer |
+| engineering | Software Architect, Backend Architect, Frontend Developer, Code Reviewer, Security Engineer, Platform Engineer, Technical Writer, AI Engineer, SDK Designer, AI Tooling Architect |
 | game-development | Game Designer, Level Designer, Narrative Designer |
-| product | Product Manager, Product Analyst |
+| product | Product Manager |
 | ux | UX Strategist |
-| testing | Accessibility Expert, API Tester |
+| testing | Accessibility Expert |
 | cross-cutting | Planner, Readiness Advisor |
 
 ### Adding Agents
@@ -93,7 +93,7 @@ ai-agency/
     find.md                # /agency find — task-based agent discovery
     consult.md             # /agency consult — expert perspectives
     deliberate.md          # /agency deliberate — structured debate
-  agents/                  # 19 agent persona files (flat, named {role}.md)
+  agents/                  # 18 agent persona files (flat, named {role}.md)
   docs/
     catalog.md             # Agent catalog — browse and pick
     authoring-guide.md     # How to create and maintain agent files
