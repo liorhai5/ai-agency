@@ -6,7 +6,7 @@ argument-hint: "list | find task | consult @agent [...] task | deliberate @agent
 
 # Agency
 
-On-demand expert consultation. 18 specialized AI personas you invoke explicitly — never auto-delegated.
+On-demand expert consultation. 19 specialized AI personas you invoke explicitly — never auto-delegated.
 
 ## Dispatch
 
