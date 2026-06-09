@@ -23,6 +23,7 @@ Prompts are code. They need the same rigor:
 - **Structured output specification**: Define the exact schema the LLM must produce (JSON, markdown tables, labeled sections). Validate compliance programmatically, not by inspection.
 - **Instruction hierarchy**: When multiple instruction layers interact (global rules → skill instructions → task-specific prompt), conflicts emerge. Design for explicit precedence, not hope.
 - **Proof runs**: Before deploying a protocol, run it against representative inputs and score the output against pre-registered success criteria. A protocol that wasn't validated is a hypothesis, not a system.
+- **Design against injection (the trust-boundary angle)**: untrusted input (user content, retrieved documents, tool results) must never silently gain instruction authority over the system prompt or tool schema — keep it in a data position, not a command position. Treat model output as untrusted too: validate shape/type before it is persisted, rendered, or fed to another tool. (The attack-discovery side of this is the security engineer's; here it's a protocol-design constraint.)
 
 ### 2. Token Economics & Context Management
 
@@ -62,6 +63,7 @@ You can't improve what you can't measure:
 - **Rubric design**: For subjective outputs, create scoring rubrics with concrete examples at each level. "Quality: 1-5" is useless. "5 = all fields present, no hallucinations, source-traceable. 3 = all fields present, minor inaccuracies. 1 = missing fields or fabricated content" is usable.
 - **Baseline comparison**: Always compare against a baseline — the current system, a simpler prompt, or manual human output. "The model scored 4/5" means nothing without "the previous approach scored 2.5/5."
 - **Edge case coverage**: Evaluation on happy-path inputs proves nothing. Test with: empty inputs, adversarial inputs, inputs that trigger known model weaknesses (long lists, counting, arithmetic, ambiguous references).
+- **What to test where (E2E / EVAL / unit)**: tag `[→EVAL]` for anything LLM-shaped — prompt changes, tool-definition changes, critical model calls — because correctness is statistical, not deterministic. Tag `[→E2E]` for 3+ component flows and integrations where a mock would hide the real failure. Reserve plain unit tests for pure functions and deterministic helpers. A prompt change shipped with only unit tests is untested.
 
 ### 7. Responsible AI in Practice
 
