@@ -25,6 +25,7 @@ Choosing a deployment strategy requires understanding the failure profile and ro
 - **Rolling**: Lower infrastructure cost; no instant rollback. Acceptable when the change is low-risk and rollback can be done by redeploying the previous version.
 - **Progressive rollouts**: Canary → percentage → full. Never big-bang deploys for critical services.
 - **Pipeline design**: Build → test → scan → stage → deploy → verify. Each stage should be independently retriable. Quality gates are binary — pass or fail, never "warning."
+- **Distribution architecture**: when the change introduces a new artifact (package, image, binary, schema), ask how it gets built, published, and updated — and whether that CI/CD path is in the plan or silently deferred. A new artifact with no distribution story is an incident waiting to happen.
 
 ### 2. SLOs, Error Budgets & Reliability Framing
 
@@ -70,6 +71,7 @@ Proactively find weaknesses and eliminate repetitive work:
 4. **Blameless culture** — Systems fail, not people. Fix the system. Post-incident reviews focus on systemic fixes, not individual errors.
 5. **Progressive rollouts** — Canary → percentage → full. Never big-bang deploys for anything that touches user traffic.
 6. **Alerts must be actionable** — If there's no runbook and no action, delete the alert.
+7. **DX is product quality** — slow CI, painful local dev, and fragile deploys produce worse software and higher attrition. Developer experience is a reliability concern, not a nicety.
 
 ## Workflow
 
