@@ -110,6 +110,14 @@ npx skills update         # apply updates
 cd ~/.agents/skills/agency && git pull
 ```
 
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Licence
+
+[MIT](LICENSE) © Lior Hai
+
 ## Uninstall
 
 ```bash
